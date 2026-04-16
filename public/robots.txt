@@ -1,0 +1,22 @@
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Twitterbot
+Allow: /
+
+User-agent: facebookexternalhit
+Allow: /
+
+User-agent: *
+Allow: /
+
+# Disallow private user routes (Don't let Google index user dashboards)
+Disallow: /dashboard/
+Disallow: /account/
+Disallow: /settings/
+
+# Point Google explicitly to the Sitemap
+Sitemap: https://kitaodola.com/sitemap.xml
