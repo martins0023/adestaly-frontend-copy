@@ -127,7 +127,7 @@ const Hero = () => {
               <div className="absolute inset-0 bg-black translate-x-4 translate-y-4 rounded-[3rem]" />
               <div className="relative w-full max-w-md mx-auto aspect-[9/16] bg-slate-100 rounded-[3rem] border-4 border-black overflow-hidden hover:-translate-y-2 hover:-translate-x-2 transition-transform duration-300">
                 <Image
-                  src="/hero-image.png"
+                  src={heroImage}
                   alt="Dola App"
                   className="w-full h-full object-cover absolute"
                   fill

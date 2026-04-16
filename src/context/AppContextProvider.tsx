@@ -4,7 +4,7 @@ import { createContext, ReactNode, SetStateAction, useContext, useState, useCall
 import { SessionPayload, ILoading } from "../constants/type";
 import { AxiosErrorResponse, handleCatchError } from "../config/utils";
 import axiosClient from "../config/client";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { createSession, deleteSession, readSessionPayload } from "../config/session";
 import toast from "react-hot-toast";
 import { RegisterForm } from "../app/(auth)/register/page";
@@ -49,7 +49,7 @@ const AppContext = createContext<AppContextProviderProps | undefined>(undefined)
 
 export function AppContextProvider({ children }: { children: ReactNode }) {
     const router = useRouter()
-    const searchParams = useSearchParams();
+    // const searchParams = useSearchParams();
 
     const [currentUser, setCurrentUser] = useState<SessionPayload | null>(null)
     const [loading, setLoading] = useState<ILoading>({ login: false, resendVerification: false, register: false, service: false, plan: false, payment: false})
@@ -101,7 +101,10 @@ export function AppContextProvider({ children }: { children: ReactNode }) {
                 await createSession({ token: data.api_access_token, firstName: data.details.firstname, lastName: data.details.lastname, middleName: data.details.middlename, email: data.details.email, id: data.details._id, phone: data.details.phone, isVerified: data.details.isVerified })
                 const user = await readSessionPayload() as SessionPayload | null;
                 setCurrentUser(user);
-                const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
+                
+                const params = new URLSearchParams(window.location.search);
+                const callbackUrl = params.get("callbackUrl") || "/dashboard";
+                
                 const destination = callbackUrl || "/dashboard";
                 router.push(destination);
 
