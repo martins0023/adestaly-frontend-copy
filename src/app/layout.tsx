@@ -4,7 +4,7 @@ import Script from "next/script";
 import "./globals.css";
 import { AppContextProvider } from "../context/AppContextProvider";
 import { Toaster } from "react-hot-toast";
-
+import { Suspense } from "react"; // 1. Imported Suspense
 
 const montserrat = Montserrat({
   variable: "--font-montserrat",
@@ -12,20 +12,17 @@ const montserrat = Montserrat({
   subsets: ["latin"],
 });
 
-
 const geistInter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
 });
 
-// 2. Viewport configuration (Separated from metadata in modern Next.js)
 export const viewport: Viewport = {
   themeColor: "#ffffff",
   width: "device-width",
   initialScale: 1.0,
 };
 
-// 3. Metadata configuration replacing all your <meta> tags
 export const metadata: Metadata = {
   title: "Dolà - Pay Bills, Airtime & Data in Nigeria | Find Joy. No Stress",
   description: "The simplest way to pay for airtime, data, and electricity in Nigeria. Experience joy and zero stress with Dolà's fast and secure platform.",
@@ -83,7 +80,6 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // JSON-LD Schemas for Rich SEO
   const softwareSchema = {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
@@ -122,7 +118,6 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        {/* Google Analytics Setup */}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-5YXNTGHXHK"
           strategy="afterInteractive"
@@ -136,7 +131,6 @@ export default function RootLayout({
           `}
         </Script>
 
-        {/* JSON-LD Schema Injection */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareSchema) }}
@@ -146,12 +140,14 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
         />
       </head>
-      {/* Updated className to use Poppins */}
       <body className={`${montserrat.className} ${geistInter.variable} antialiased bg-colorbg`}>
-        <AppContextProvider>
-          {children}
-          <Toaster />
-        </AppContextProvider>
+        {/* 2. Added Suspense Boundary around the Context Provider */}
+        <Suspense fallback={null}>
+          <AppContextProvider>
+            {children}
+            <Toaster />
+          </AppContextProvider>
+        </Suspense>
       </body>
     </html>
   );
