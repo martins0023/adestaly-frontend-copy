@@ -1,9 +1,12 @@
 "use client"
 
+import { Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 
 const NotFound = () => {
+  const searchParams = useSearchParams();
   const location = usePathname();
 
   useEffect(() => {
@@ -11,6 +14,7 @@ const NotFound = () => {
   }, [location]);
 
   return (
+    <Suspense fallback={<div>Loading...</div>}>
     <div className="flex min-h-screen items-center justify-center bg-muted">
       <div className="text-center">
         <h1 className="mb-4 text-4xl font-bold">404</h1>
@@ -20,6 +24,7 @@ const NotFound = () => {
         </a>
       </div>
     </div>
+    </Suspense>
   );
 };
 
