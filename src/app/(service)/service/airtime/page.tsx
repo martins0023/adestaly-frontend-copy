@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useEffect, useState, useRef, FormEvent } from 'react';
 import { mtn, glo, airtel, etisalat } from '../../../../../public/images/index';
 import Image, { StaticImageData } from 'next/image';
-import { FaCaretDown } from 'react-icons/fa';
+import { FaCaretDown, FaArrowLeft } from 'react-icons/fa';
 import { readSessionPayload } from '@/src/config/session';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
@@ -158,7 +158,10 @@ const Airtime = () => {
     return (
         <section className="sm:px-10 px-1">
             <motion.div initial="hidden" animate="visible" className="dashboard-container">
-                <div className="w-full max-w-7xl mx-auto pt-4">
+                <div className="w-full max-w-7xl mx-auto pt-4 relative">
+                    <button type="button" onClick={() => router.back()} className="mb-4 flex items-center gap-2 text-sm font-bold text-gray-600 hover:text-primary transition-colors bg-white px-4 py-2 rounded-xl shadow-sm border border-gray-100 w-fit">
+                        <FaArrowLeft /> Back
+                    </button>
                     <BalanceDashboard />
                 </div>
 

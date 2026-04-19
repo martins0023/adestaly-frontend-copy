@@ -123,14 +123,18 @@ const Hero = () => {
           {/* Right Image (Mockup with Pop Effect) */}
           <div className="relative lg:h-[700px] flex items-center justify-center">
             {/* Main Phone Container with Pop Effect */}
-            <div className="relative group z-20">
+            <div className="relative group z-20 w-full max-w-md mx-auto">
+              {/* Shadow Background */}
               <div className="absolute inset-0 bg-black translate-x-4 translate-y-4 rounded-[3rem]" />
-              <div className="relative w-full max-w-md mx-auto aspect-[9/16] bg-slate-100 rounded-[3rem] border-4 border-black overflow-hidden hover:-translate-y-2 hover:-translate-x-2 transition-transform duration-300">
+              
+              {/* Phone Content Container */}
+              <div className="relative w-full aspect-[9/16] bg-slate-100 rounded-[3rem] border-4 border-black overflow-hidden hover:-translate-y-2 hover:-translate-x-2 transition-transform duration-300">
                 <Image
-                  src={heroImage}
+                  src="/hero-img.png"
                   alt="Dola App"
-                  className="w-full h-full object-cover absolute"
+                  className="object-cover" // We only need object-cover here, 'fill' handles the rest!
                   fill
+                  priority // Ensures this image loads immediately
                 />
               </div>
             </div>
