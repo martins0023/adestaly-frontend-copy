@@ -8,6 +8,7 @@ const BalanceDashboard = () => {
   const [showBalance, setShowBalance] = useState(false);
 
   return (
+    <section className="mx-3">
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
@@ -69,6 +70,7 @@ const BalanceDashboard = () => {
         
       </div>
     </motion.div>
+    </section>
   );
 };
 

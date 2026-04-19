@@ -78,9 +78,9 @@ function TransactionDetailsContent() {
         <FaExclamationCircle className="text-5xl text-gray-400 mb-4" />
         <h2 className="text-xl font-bold text-gray-800 mb-2">Transaction Not Found</h2>
         <p className="text-sm text-gray-500 mb-6">{error}</p>
-        <button onClick={() => router.back()} className="px-6 py-2 bg-orange-500 text-white font-bold rounded-lg hover:bg-orange-600 transition">
+        {/* <button onClick={() => router.back()} className="px-6 py-2 bg-orange-500 text-white font-bold rounded-lg hover:bg-orange-600 transition">
           Go Back
-        </button>
+        </button> */}
       </div>
     );
   }
@@ -99,15 +99,6 @@ function TransactionDetailsContent() {
       `}} />
 
       <div className="max-w-xl mx-auto">
-        <div className="flex items-center justify-between mb-6 no-print">
-          <button onClick={() => router.back()} className="flex items-center gap-2 text-gray-600 hover:text-orange-500 transition-colors font-bold text-sm bg-white px-4 py-2 rounded-xl shadow-sm border border-gray-100">
-            <FaArrowLeft /> Back
-          </button>
-          <button onClick={handleDownloadPDF} className="flex items-center gap-2 bg-orange-500 text-white px-4 py-2 rounded-xl font-bold text-sm shadow-md hover:bg-orange-600 transition-colors">
-            <FaDownload /> Save Receipt
-          </button>
-        </div>
-
         <motion.div 
           initial={{ opacity: 0, y: 15 }} 
           animate={{ opacity: 1, y: 0 }} 
@@ -186,6 +177,15 @@ function TransactionDetailsContent() {
           </div>
         </motion.div>
       </div>
+
+      <div className="flex items-center justify-center mt-6 no-print">
+          {/* <button onClick={() => router.back()} className="flex items-center gap-2 text-gray-600 hover:text-orange-500 transition-colors font-bold text-sm bg-white px-4 py-2 rounded-xl shadow-sm border border-gray-100">
+            <FaArrowLeft /> Back
+          </button> */}
+          <button onClick={handleDownloadPDF} className="flex items-center gap-2 bg-orange-500 text-white px-4 py-2 rounded-xl font-bold text-sm hover:bg-orange-600 transition-colors">
+            <FaDownload /> Save Receipt
+          </button>
+        </div>
     </section>
   );
 }

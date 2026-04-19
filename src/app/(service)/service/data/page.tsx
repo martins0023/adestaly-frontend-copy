@@ -11,6 +11,7 @@ import { FaCaretDown, FaArrowLeft } from 'react-icons/fa'; // Install react-icon
 import { readSessionPayload } from '@/src/config/session';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
+import BackButton from '@/src/components/BackButton';
 
 const getNetworkByPrefix = (number: string) => {
     if (!number || number.length < 4) return "";
@@ -224,12 +225,11 @@ const Data = () => {
     }
 
     return (
-        <section className="sm:px-10 px-1">
+        <>
+        <BackButton />
+        <section className="sm:px-10 px-1 mt-15">
             <motion.div initial="hidden" animate="visible" className="dashboard-container">
                 <div className="w-full max-w-7xl mx-auto pt-4 relative">
-                    <button type="button" onClick={() => router.back()} className="mb-4 flex items-center gap-2 text-sm font-bold text-gray-600 hover:text-primary transition-colors bg-white px-4 py-2 rounded-xl shadow-sm border border-gray-100 w-fit">
-                        <FaArrowLeft /> Back
-                    </button>
                     <BalanceDashboard />
                 </div>
 
@@ -396,6 +396,7 @@ const Data = () => {
                 </div>
             </motion.div>
         </section>
+        </>
     );
 };
 

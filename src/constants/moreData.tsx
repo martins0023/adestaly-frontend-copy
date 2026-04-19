@@ -23,25 +23,25 @@ export const BillPaymentInfo = [
         icon: <FaSimCard />,
         color: "text-orange-500 bg-orange-50",
         label: "Airtime",
-        link: "/airtime"
+        link: "/service/airtime"
     },
     {
         icon: <FaSimplybuilt />,
         color: "text-emerald-500 bg-emerald-50",
         label: "Data",
-        link: "/data",
+        link: "/service/data",
     },
     {
         icon: <FaLightbulb />,
         color: "text-purple-500 bg-purple-50",
         label: "Electricity",
-        link: "/electricity",
+        link: "/service/electricity",
     },
     {
         icon: < FaTv />,
         color: "text-sky-500 bg-sky-50",
         label: "Cable TV",
-        link: "/cable",
+        link: "/service/cable",
     },
 ]
 

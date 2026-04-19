@@ -87,7 +87,7 @@ export const servicesAction = [
   {
     icon: <FaEllipsisH />,
     label: 'More',
-    id: "/"
+    id: "/more"
   },
 ];
 

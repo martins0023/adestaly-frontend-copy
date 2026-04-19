@@ -9,6 +9,8 @@ import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 import { readSessionPayload } from '@/src/config/session';
 import { FaArrowLeft } from 'react-icons/fa';
+import BackButton from '@/src/components/BackButton';
+
 
 const Cable = () => {
     const router = useRouter()
@@ -122,135 +124,137 @@ const Cable = () => {
     }
 
     return (
-        <section className="sm:px-10 px-1">
-            <motion.div initial="hidden" animate="visible" className="dashboard-container">
-                <div className="w-full max-w-7xl mx-auto pt-4 relative">
-                    <button type="button" onClick={() => router.back()} className="mb-4 flex items-center gap-2 text-sm font-bold text-gray-600 hover:text-primary transition-colors bg-white px-4 py-2 rounded-xl shadow-sm border border-gray-100 w-fit">
-                        <FaArrowLeft /> Back
-                    </button>
-                    <BalanceDashboard />
-                </div>
+        <>
+            <BackButton />
+            <section className="sm:px-10 px-1 mt-15">
+            
+                <motion.div initial="hidden" animate="visible" className="dashboard-container">
+                    
+                    <div className="w-full max-w-7xl mx-auto pt-4 relative">
+                        <BalanceDashboard />
+                    </div>
 
-                <div className="flex flex-col gap-8 p-3 max-w-xl mx-auto">
-                    <form className="mt-5 flex flex-col gap-4" onSubmit={handleSubmit}>
+                    <div className="flex flex-col gap-8 p-3 max-w-xl mx-auto">
+                        <form className="mt-5 flex flex-col gap-4" onSubmit={handleSubmit}>
 
-                        {/* SERVICE TYPE */}
-                        <div className="flex flex-col gap-2">
-                            <select
-                                name="serviceId"
-                                value={formData.serviceId}
-                                onChange={handleServiceChange}
-                                className="bg-white py-4 px-6 text-black rounded-xl outline-none border-none text-[12px] w-full h-[52px] font-medium appearance-none"
-                            >
-                                <option value="">{loading.service ? 'Loading Providers...' : 'Select TV Provider'}</option>
-                                {services.map((service: any) => (
-                                    <option key={service.serviceID || service.id} value={service.serviceID || service.id}>{service.name}</option>
-                                ))}
-                            </select>
-                        </div>
-
-                         {/* PLAN CARDS GRID */}
-                         {plans.length > 0 && (
-                            <div className="flex flex-col gap-3 mt-2">
-                              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                                  {visiblePlans.map((plan: any) => (
-                                      <motion.div
-                                          whileTap={{ scale: 0.95 }}
-                                          key={plan.variation_code}
-                                          onClick={() => setFormData(prev => ({
-                                              ...prev,
-                                              variation_code: plan.variation_code,
-                                              amount: plan.variation_amount
-                                          }))}
-                                          className={`p-4 rounded-2xl border-2 cursor-pointer transition-all flex flex-col gap-1 relative overflow-hidden ${formData.variation_code === plan.variation_code
-                                                  ? 'border-orange-500 bg-orange-50'
-                                                  : 'border-white bg-white'
-                                              }`}
-                                      >
-                                          <p className="text-[14px] font-bold text-gray-800">
-                                              {plan.name}
-                                          </p>
-                                          <p className="text-[12px] text-gray-500 font-medium">
-                                              ₦{Number(plan.variation_amount || plan.amount).toLocaleString()}
-                                          </p>
-
-                                          {formData.variation_code === plan.variation_code && (
-                                              <div className="absolute top-2 right-2 w-4 h-4 bg-orange-500 rounded-full flex items-center justify-center">
-                                                  <div className="w-2 h-2 bg-white rounded-full" />
-                                              </div>
-                                          )}
-                                      </motion.div>
-                                  ))}
-                              </div>
-                              {plans.length > 6 && (
-                                  <button
-                                      type="button"
-                                      onClick={() => setShowAllPlans(!showAllPlans)}
-                                      className="text-orange-500 font-bold text-sm mx-auto hover:bg-orange-50 px-4 py-2 rounded-lg transition-all"
-                                  >
-                                      {showAllPlans ? 'Show Less' : 'Show More Plans'}
-                                  </button>
-                              )}
+                            {/* SERVICE TYPE */}
+                            <div className="flex flex-col gap-2">
+                                <select
+                                    name="serviceId"
+                                    value={formData.serviceId}
+                                    onChange={handleServiceChange}
+                                    className="bg-white py-4 px-6 text-black rounded-xl outline-none border-none text-[12px] w-full h-[52px] font-medium appearance-none"
+                                >
+                                    <option value="">{loading.service ? 'Loading Providers...' : 'Select TV Provider'}</option>
+                                    {services.map((service: any) => (
+                                        <option key={service.serviceID || service.id} value={service.serviceID || service.id}>{service.name}</option>
+                                    ))}
+                                </select>
                             </div>
-                         )}
 
-                        {/* SMARTCARD NUMBER INPUT */}
-                        <div className="flex flex-col gap-2">
-                            <Input
-                                type="text"
-                                name="smartcardNumber"
-                                placeholder="Smartcard / IUC Number"
-                                value={formData.smartcardNumber}
-                                onChange={handleChange}
-                            />
-                            {!billerName && (
-                               <button 
-                                  type="button" 
-                                  onClick={handleVerify}
-                                  disabled={isVerifying || !formData.smartcardNumber || !formData.serviceId}
-                                  className="self-end bg-orange-100 px-4 py-2 rounded-lg text-orange-600 font-bold text-sm disabled:opacity-50 transition-colors hover:bg-orange-200"
-                               >
-                                  {isVerifying ? 'Verifying...' : 'Verify Smartcard'}
-                               </button>
-                            )}
-                            {billerName && (
-                                <AnimatePresence>
-                                    <motion.div 
-                                        initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }}
-                                        className="bg-green-50 text-green-700 p-3 rounded-lg text-sm font-semibold border border-green-200"
+                            {/* PLAN CARDS GRID */}
+                            {plans.length > 0 && (
+                                <div className="flex flex-col gap-3 mt-2">
+                                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                                    {visiblePlans.map((plan: any) => (
+                                        <motion.div
+                                            whileTap={{ scale: 0.95 }}
+                                            key={plan.variation_code}
+                                            onClick={() => setFormData(prev => ({
+                                                ...prev,
+                                                variation_code: plan.variation_code,
+                                                amount: plan.variation_amount
+                                            }))}
+                                            className={`p-4 rounded-2xl border-2 cursor-pointer transition-all flex flex-col gap-1 relative overflow-hidden ${formData.variation_code === plan.variation_code
+                                                    ? 'border-orange-500 bg-orange-50'
+                                                    : 'border-white bg-white'
+                                                }`}
+                                        >
+                                            <p className="text-[14px] font-bold text-gray-800">
+                                                {plan.name}
+                                            </p>
+                                            <p className="text-[12px] text-gray-500 font-medium">
+                                                ₦{Number(plan.variation_amount || plan.amount).toLocaleString()}
+                                            </p>
+
+                                            {formData.variation_code === plan.variation_code && (
+                                                <div className="absolute top-2 right-2 w-4 h-4 bg-orange-500 rounded-full flex items-center justify-center">
+                                                    <div className="w-2 h-2 bg-white rounded-full" />
+                                                </div>
+                                            )}
+                                        </motion.div>
+                                    ))}
+                                </div>
+                                {plans.length > 6 && (
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowAllPlans(!showAllPlans)}
+                                        className="text-orange-500 font-bold text-sm mx-auto hover:bg-orange-50 px-4 py-2 rounded-lg transition-all"
                                     >
-                                        Verified Name: {billerName}
-                                    </motion.div>
-                                </AnimatePresence>
+                                        {showAllPlans ? 'Show Less' : 'Show More Plans'}
+                                    </button>
+                                )}
+                                </div>
                             )}
-                        </div>
 
-                        {/* AMOUNT INPUT (Readonly) */}
-                        <div className="flex flex-col gap-2">
-                            <div className="flex-1 relative">
-                                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-medium">₦</span>
+                            {/* SMARTCARD NUMBER INPUT */}
+                            <div className="flex flex-col gap-2">
                                 <Input
                                     type="text"
-                                    name="amount"
-                                    placeholder="Amount to Pay"
-                                    className="pl-8 bg-gray-200 text-gray-500 font-bold"
-                                    value={formData.amount}
+                                    name="smartcardNumber"
+                                    placeholder="Smartcard / IUC Number"
+                                    value={formData.smartcardNumber}
                                     onChange={handleChange}
-                                    readOnly
-                                    disabled
                                 />
+                                {!billerName && (
+                                <button 
+                                    type="button" 
+                                    onClick={handleVerify}
+                                    disabled={isVerifying || !formData.smartcardNumber || !formData.serviceId}
+                                    className="self-end bg-orange-100 px-4 py-2 rounded-lg text-orange-600 font-bold text-sm disabled:opacity-50 transition-colors hover:bg-orange-200"
+                                >
+                                    {isVerifying ? 'Verifying...' : 'Verify Smartcard'}
+                                </button>
+                                )}
+                                {billerName && (
+                                    <AnimatePresence>
+                                        <motion.div 
+                                            initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }}
+                                            className="bg-green-50 text-green-700 p-3 rounded-lg text-sm font-semibold border border-green-200"
+                                        >
+                                            Verified Name: {billerName}
+                                        </motion.div>
+                                    </AnimatePresence>
+                                )}
                             </div>
-                        </div>
 
-                        {billerName && (
-                            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-auto items-center justify-center mt-10 mb-5">
-                                <Btn type='submit' title='Pay Subscription' loading={loading.payment} />
-                            </motion.div>
-                        )}
-                    </form>
-                </div>
-            </motion.div>
-        </section>
+                            {/* AMOUNT INPUT (Readonly) */}
+                            <div className="flex flex-col gap-2">
+                                <div className="flex-1 relative">
+                                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-medium">₦</span>
+                                    <Input
+                                        type="text"
+                                        name="amount"
+                                        placeholder="Amount to Pay"
+                                        className="pl-8 bg-gray-200 text-gray-500 font-bold"
+                                        value={formData.amount}
+                                        onChange={handleChange}
+                                        readOnly
+                                        disabled
+                                    />
+                                </div>
+                            </div>
+
+                            {billerName && (
+                                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-auto items-center justify-center mt-10 mb-5">
+                                    <Btn type='submit' title='Pay Subscription' loading={loading.payment} />
+                                </motion.div>
+                            )}
+                        </form>
+                    </div>
+                </motion.div>
+            </section>
+        </>
     );
 };
 
