@@ -25,6 +25,14 @@ const providerIcons: Record<string, string> = {
   MTN: '/images/mtn.png',
   Airtel: '/images/airtel.png',
   '9mobile': '/images/etisalat.png',
+  Electricity: '/images/electricity.png',
+  Cable: '/images/cable.png',
+  Exam: '/images/exampin.png',
+  DSTV: '/images/dstv.png',
+  GOTV: '/images/gotv.png',
+  Startimes: '/images/startimes.png',
+  WAEC: '/images/waec.png',
+  NECO: '/images/neco.png',
 };
 
 const getStatusStyles = (status: string | undefined) => {
@@ -71,11 +79,32 @@ const formatTime = (dateString: string) => {
 const determineProvider = (name = '') => {
   if (!name) return 'MTN';
   const lower = name.toLowerCase();
+
+  // Airtime/Data
   if (lower.includes('mtn')) return 'MTN';
   if (lower.includes('glo')) return 'Glo';
   if (lower.includes('airtel')) return 'Airtel';
   if (lower.includes('9mobile') || lower.includes('etisalat')) return '9mobile';
-  return 'MTN';
+
+  // Cable
+  if (lower.includes('dstv')) return 'DSTV';
+  if (lower.includes('gotv')) return 'GOTV';
+  if (lower.includes('startimes')) return 'Startimes';
+
+  // Exam
+  if (lower.includes('waec')) return 'WAEC';
+  if (lower.includes('neco')) return 'NECO';
+
+  // General catch-all for Electricity
+  if (lower.includes('electric') || lower.includes('power') || lower.includes('edc')) return 'Electricity';
+
+  // General catch-all for Cable
+  if (lower.includes('tv') || lower.includes('cable') || lower.includes('showmax')) return 'Cable';
+
+  // General catch-all for Exam
+  if (lower.includes('exam') || lower.includes('education') || lower.includes('jamb')) return 'Exam';
+
+  return 'MTN'; // Fallback
 };
 
 interface UITransaction {
@@ -186,7 +215,7 @@ export default function HistoryTopup() {
     return groups;
   }, [filteredTransactions]);
 
-  const filterOptions = ['All', 'Airtime', 'Data', 'Cable', 'Electricity'];
+  const filterOptions = ['All', 'Airtime', 'Data', 'Tv', 'Electricity'];
 
   // Animations
   const containerVariants = {
