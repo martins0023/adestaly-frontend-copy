@@ -28,7 +28,7 @@ function TransactionDetailsContent() {
       try {
         const res = await UseGetApi(`api/bill/history/${id}`);
         if (res?.success) {
-          setTransaction(res.details || res.data);
+          setTransaction((res as any).details || res.data);
         } else {
           setError(res?.message || "Failed to load transaction details.");
         }
