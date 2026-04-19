@@ -121,7 +121,7 @@ function TransactionDetailsContent() {
             <h2 className="text-2xl font-black text-gray-900 mb-1">
                ₦{Number(transaction.amount || 0).toLocaleString()}
             </h2>
-            <span className={\`inline-block px-3 py-1 rounded-md text-xs font-bold uppercase tracking-wider border \${getStatusColor(transaction.status)}\`}>
+            <span className={`inline-block px-3 py-1 rounded-md text-xs font-bold uppercase tracking-wider border \${getStatusColor(transaction.status)}`}>
                {transaction.status}
             </span>
           </div>
