@@ -16,6 +16,7 @@ import {
     FaPhone,
     FaSignOutAlt,
     FaTimes,
+    FaPlane,
 } from 'react-icons/fa';
 
 export const BillPaymentInfo = [
@@ -43,6 +44,12 @@ export const BillPaymentInfo = [
         label: "Cable TV",
         link: "/service/cable",
     },
+    {
+        icon: <FaGraduationCap />,
+        color: "text-indigo-500 bg-indigo-50",
+        label: "School Fees",
+        link: "/service/school-fees"
+    },
 ]
 
 export const EssentialsInfo = [
@@ -56,19 +63,19 @@ export const EssentialsInfo = [
         icon: <FaGraduationCap />,
         color: "text-indigo-500 bg-indigo-50",
         label: "Exam Pin",
-        link: "/",
+        link: "/service/exam",
     },
     {
-        icon: <FaReceipt />,
-        color: "text-gray-600 bg-gray-100",
-        label: "Data Pin",
-        link: "/",
+        icon: <FaPlane />,
+        color: "text-blue-500 bg-blue-50",
+        label: "Flights",
+        link: "/service/flights",
     },
     {
-        icon: <FaMoneyBill />,
-        color: "text-yellow-500 bg-yellow-50",
-        label: "Add Funds",
-        link: "/",
+        icon: <FaGift />,
+        color: "text-amber-500 bg-amber-50",
+        label: "Gift Cards",
+        link: "/service/giftcards",
     },
 ]
 

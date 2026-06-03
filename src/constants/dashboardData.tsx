@@ -15,6 +15,8 @@ import {
   FaPlus,
   FaExchangeAlt,
   FaWallet,
+  FaPlane,
+  FaGift,
 } from 'react-icons/fa';
 
 // --- UI Data ---
@@ -75,14 +77,19 @@ export const servicesAction = [
     id: "/service/exam",
   },
   {
-    icon: <FaReceipt />,
-    label: 'Data Pin',
-    id: "/data",
+    icon: <FaGraduationCap />,
+    label: 'School Fees',
+    id: "/service/school-fees",
   },
   {
-    icon: <FaSearchDollar />,
-    label: 'Referrals',
-    id: "/",
+    icon: <FaPlane />,
+    label: 'Flights',
+    id: "/service/flights",
+  },
+  {
+    icon: <FaGift />,
+    label: 'Gift Cards',
+    id: "/service/giftcards",
   },
   {
     icon: <FaEllipsisH />,
