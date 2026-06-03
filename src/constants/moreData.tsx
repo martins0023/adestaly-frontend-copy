@@ -17,6 +17,7 @@ import {
     FaSignOutAlt,
     FaTimes,
     FaPlane,
+    FaTruck,
 } from 'react-icons/fa';
 
 export const BillPaymentInfo = [
@@ -76,6 +77,12 @@ export const EssentialsInfo = [
         color: "text-amber-500 bg-amber-50",
         label: "Gift Cards",
         link: "/service/giftcards",
+    },
+    {
+        icon: <FaTruck />,
+        color: "text-rose-500 bg-rose-50",
+        label: "Package Delivery",
+        link: "/service/delivery",
     },
 ]
 

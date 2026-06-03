@@ -17,6 +17,7 @@ import {
   FaWallet,
   FaPlane,
   FaGift,
+  FaTruck,
 } from 'react-icons/fa';
 
 // --- UI Data ---
@@ -90,6 +91,11 @@ export const servicesAction = [
     icon: <FaGift />,
     label: 'Gift Cards',
     id: "/service/giftcards",
+  },
+  {
+    icon: <FaTruck />,
+    label: 'Delivery',
+    id: "/service/delivery",
   },
   {
     icon: <FaEllipsisH />,
