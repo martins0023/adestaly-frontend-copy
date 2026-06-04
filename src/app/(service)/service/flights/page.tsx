@@ -171,28 +171,52 @@ const Flights = () => {
                         <form className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 flex flex-col gap-4" onSubmit={handleSearch}>
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="flex flex-col gap-1.5">
-                                    <label className="text-[10px] uppercase font-bold text-gray-400">Origin (IATA)</label>
-                                    <Input
-                                        type="text"
+                                    <label className="text-[10px] uppercase font-bold text-gray-400">Origin Location</label>
+                                    <select
                                         name="origin"
                                         value={searchParams.origin}
                                         onChange={handleSearchChange}
-                                        maxLength={3}
-                                        className="font-bold tracking-widest text-center"
-                                        placeholder="LOS"
-                                    />
+                                        className="bg-[#f3f4f6] text-[12px] h-[52px] w-full border-none rounded-xl px-4 font-semibold text-gray-700 outline-none"
+                                    >
+                                        <option value="LOS">Lagos (LOS) - Murtala Muhammed</option>
+                                        <option value="ABV">Abuja (ABV) - Nnamdi Azikiwe</option>
+                                        <option value="PHC">Port Harcourt (PHC) - Omagwa</option>
+                                        <option value="KAN">Kano (KAN) - Mallam Aminu</option>
+                                        <option value="ENU">Enugu (ENU) - Akanu Ibiam</option>
+                                        <option value="QOW">Owerri (QOW) - Sam Mbakwe</option>
+                                        <option value="CBQ">Calabar (CBQ) - Margaret Ekpo</option>
+                                        <option value="LHR">London (LHR) - Heathrow</option>
+                                        <option value="JFK">New York (JFK) - John F. Kennedy</option>
+                                        <option value="DXB">Dubai (DXB) - International</option>
+                                        <option value="CDG">Paris (CDG) - Charles de Gaulle</option>
+                                        <option value="JNB">Johannesburg (JNB) - O.R. Tambo</option>
+                                        <option value="ACC">Accra (ACC) - Kotoka</option>
+                                        <option value="KGL">Kigali (KGL) - Intl</option>
+                                    </select>
                                 </div>
                                 <div className="flex flex-col gap-1.5">
-                                    <label className="text-[10px] uppercase font-bold text-gray-400">Destination (IATA)</label>
-                                    <Input
-                                        type="text"
+                                    <label className="text-[10px] uppercase font-bold text-gray-400">Destination Location</label>
+                                    <select
                                         name="destination"
                                         value={searchParams.destination}
                                         onChange={handleSearchChange}
-                                        maxLength={3}
-                                        className="font-bold tracking-widest text-center"
-                                        placeholder="ABV"
-                                    />
+                                        className="bg-[#f3f4f6] text-[12px] h-[52px] w-full border-none rounded-xl px-4 font-semibold text-gray-700 outline-none"
+                                    >
+                                        <option value="ABV">Abuja (ABV) - Nnamdi Azikiwe</option>
+                                        <option value="LOS">Lagos (LOS) - Murtala Muhammed</option>
+                                        <option value="PHC">Port Harcourt (PHC) - Omagwa</option>
+                                        <option value="KAN">Kano (KAN) - Mallam Aminu</option>
+                                        <option value="ENU">Enugu (ENU) - Akanu Ibiam</option>
+                                        <option value="QOW">Owerri (QOW) - Sam Mbakwe</option>
+                                        <option value="CBQ">Calabar (CBQ) - Margaret Ekpo</option>
+                                        <option value="LHR">London (LHR) - Heathrow</option>
+                                        <option value="JFK">New York (JFK) - John F. Kennedy</option>
+                                        <option value="DXB">Dubai (DXB) - International</option>
+                                        <option value="CDG">Paris (CDG) - Charles de Gaulle</option>
+                                        <option value="JNB">Johannesburg (JNB) - O.R. Tambo</option>
+                                        <option value="ACC">Accra (ACC) - Kotoka</option>
+                                        <option value="KGL">Kigali (KGL) - Intl</option>
+                                    </select>
                                 </div>
                             </div>
 
