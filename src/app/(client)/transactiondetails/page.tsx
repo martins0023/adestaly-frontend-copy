@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { UseGetApi } from '@/src/config/Action';
-import { FaArrowLeft, FaDownload, FaSpinner, FaCheckCircle, FaExclamationCircle, FaTimesCircle, FaRegCopy } from 'react-icons/fa';
+import { FaArrowLeft, FaDownload, FaSpinner, FaCheckCircle, FaExclamationCircle, FaTimesCircle, FaRegCopy, FaPlane } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 
@@ -178,10 +178,18 @@ function TransactionDetailsContent() {
         </motion.div>
       </div>
 
-      <div className="flex items-center justify-center mt-6 no-print">
-          {/* <button onClick={() => router.back()} className="flex items-center gap-2 text-gray-600 hover:text-orange-500 transition-colors font-bold text-sm bg-white px-4 py-2 rounded-xl shadow-sm border border-gray-100">
-            <FaArrowLeft /> Back
-          </button> */}
+      <div className="flex items-center justify-center gap-4 mt-6 no-print">
+          <button onClick={() => router.push('/history')} className="flex items-center gap-2 text-gray-600 hover:text-orange-500 transition-colors font-bold text-sm bg-white px-4 py-2 rounded-xl shadow-sm border border-gray-100">
+            <FaArrowLeft /> Back to History
+          </button>
+          {transaction.type === 'flight' && (
+            <button 
+              onClick={() => router.push(`/service/flights/receipt/${transaction._id}`)} 
+              className="flex items-center gap-2 bg-[#FF8C00] text-white px-4 py-2 rounded-xl font-bold text-sm hover:bg-opacity-95 transition-all shadow-sm active:scale-98"
+            >
+              <FaPlane /> View Boarding Pass
+            </button>
+          )}
           <button onClick={handleDownloadPDF} className="flex items-center gap-2 bg-orange-500 text-white px-4 py-2 rounded-xl font-bold text-sm hover:bg-orange-600 transition-colors">
             <FaDownload /> Save Receipt
           </button>

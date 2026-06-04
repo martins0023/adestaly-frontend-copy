@@ -10,11 +10,13 @@ import { useRouter } from 'next/navigation';
 import { readSessionPayload } from '@/src/config/session';
 import BackButton from '@/src/components/BackButton';
 import { UseGetApi, UsePostApi } from '@/src/config/Action';
-import { FaPlane, FaSearch, FaUser, FaClock, FaCheck, FaExchangeAlt } from 'react-icons/fa';
+import { FaPlane, FaSearch, FaUser, FaClock, FaCheck, FaExchangeAlt, FaHistory } from 'react-icons/fa';
 
 const Flights = () => {
     const router = useRouter();
     const { initializeBillPayment } = useAppContext();
+
+    const [activeTab, setActiveTab] = useState<'book' | 'history'>('book');
 
     const [searchParams, setSearchParams] = useState({
         origin: 'LOS',
@@ -35,6 +37,9 @@ const Flights = () => {
 
     const [userEmail, setUserEmail] = useState('');
     const [isBooking, setIsBooking] = useState(false);
+    
+    const [myBookings, setMyBookings] = useState<any[]>([]);
+    const [loadingHistory, setLoadingHistory] = useState(false);
 
     useEffect(() => {
         const getInfo = async () => {
@@ -44,6 +49,26 @@ const Flights = () => {
         };
         getInfo();
     }, []);
+
+    const fetchHistory = async () => {
+        try {
+            setLoadingHistory(true);
+            const res = await UseGetApi('api/flight/my-bookings');
+            if (res.success && Array.isArray(res.data)) {
+                setMyBookings(res.data);
+            }
+        } catch (error) {
+            console.error("Error fetching bookings vault", error);
+        } finally {
+            setLoadingHistory(false);
+        }
+    };
+
+    useEffect(() => {
+        if (activeTab === 'history') {
+            fetchHistory();
+        }
+    }, [activeTab]);
 
     const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
@@ -166,280 +191,349 @@ const Flights = () => {
                         <p className="text-xs text-gray-500 mt-1">Book international and domestic flight tickets in minutes</p>
                     </div>
 
-                    {/* SEARCH PANEL */}
-                    {!selectedOffer && (
-                        <form className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 flex flex-col gap-4" onSubmit={handleSearch}>
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="flex flex-col gap-1.5">
-                                    <label className="text-[10px] uppercase font-bold text-gray-400">Origin Location</label>
-                                    <select
-                                        name="origin"
-                                        value={searchParams.origin}
-                                        onChange={handleSearchChange}
-                                        className="bg-[#f3f4f6] text-[12px] h-[52px] w-full border-none rounded-xl px-4 font-semibold text-gray-700 outline-none"
-                                    >
-                                        <option value="LOS">Lagos (LOS) - Murtala Muhammed</option>
-                                        <option value="ABV">Abuja (ABV) - Nnamdi Azikiwe</option>
-                                        <option value="PHC">Port Harcourt (PHC) - Omagwa</option>
-                                        <option value="KAN">Kano (KAN) - Mallam Aminu</option>
-                                        <option value="ENU">Enugu (ENU) - Akanu Ibiam</option>
-                                        <option value="QOW">Owerri (QOW) - Sam Mbakwe</option>
-                                        <option value="CBQ">Calabar (CBQ) - Margaret Ekpo</option>
-                                        <option value="LHR">London (LHR) - Heathrow</option>
-                                        <option value="JFK">New York (JFK) - John F. Kennedy</option>
-                                        <option value="DXB">Dubai (DXB) - International</option>
-                                        <option value="CDG">Paris (CDG) - Charles de Gaulle</option>
-                                        <option value="JNB">Johannesburg (JNB) - O.R. Tambo</option>
-                                        <option value="ACC">Accra (ACC) - Kotoka</option>
-                                        <option value="KGL">Kigali (KGL) - Intl</option>
-                                    </select>
-                                </div>
-                                <div className="flex flex-col gap-1.5">
-                                    <label className="text-[10px] uppercase font-bold text-gray-400">Destination Location</label>
-                                    <select
-                                        name="destination"
-                                        value={searchParams.destination}
-                                        onChange={handleSearchChange}
-                                        className="bg-[#f3f4f6] text-[12px] h-[52px] w-full border-none rounded-xl px-4 font-semibold text-gray-700 outline-none"
-                                    >
-                                        <option value="ABV">Abuja (ABV) - Nnamdi Azikiwe</option>
-                                        <option value="LOS">Lagos (LOS) - Murtala Muhammed</option>
-                                        <option value="PHC">Port Harcourt (PHC) - Omagwa</option>
-                                        <option value="KAN">Kano (KAN) - Mallam Aminu</option>
-                                        <option value="ENU">Enugu (ENU) - Akanu Ibiam</option>
-                                        <option value="QOW">Owerri (QOW) - Sam Mbakwe</option>
-                                        <option value="CBQ">Calabar (CBQ) - Margaret Ekpo</option>
-                                        <option value="LHR">London (LHR) - Heathrow</option>
-                                        <option value="JFK">New York (JFK) - John F. Kennedy</option>
-                                        <option value="DXB">Dubai (DXB) - International</option>
-                                        <option value="CDG">Paris (CDG) - Charles de Gaulle</option>
-                                        <option value="JNB">Johannesburg (JNB) - O.R. Tambo</option>
-                                        <option value="ACC">Accra (ACC) - Kotoka</option>
-                                        <option value="KGL">Kigali (KGL) - Intl</option>
-                                    </select>
-                                </div>
-                            </div>
+                    {/* Tabs navigation */}
+                    <div className="flex bg-white p-1.5 rounded-xl border border-gray-100 shadow-sm">
+                        <button
+                            onClick={() => { setActiveTab('book'); setSelectedOffer(null); }}
+                            className={`flex-1 py-2.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
+                                activeTab === 'book' ? 'bg-primary text-white shadow-sm' : 'text-gray-500 hover:text-gray-700'
+                            }`}
+                        >
+                            <FaPlane />
+                            <span>Book Flight</span>
+                        </button>
+                        <button
+                            onClick={() => { setActiveTab('history'); setSelectedOffer(null); }}
+                            className={`flex-1 py-2.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
+                                activeTab === 'history' ? 'bg-primary text-white shadow-sm' : 'text-gray-500 hover:text-gray-700'
+                            }`}
+                        >
+                            <FaHistory />
+                            <span>My Bookings</span>
+                        </button>
+                    </div>
 
-                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                                <div className="flex flex-col gap-1.5">
-                                    <label className="text-[10px] uppercase font-bold text-gray-400">Departure Date</label>
-                                    <Input
-                                        type="date"
-                                        name="departureDate"
-                                        value={searchParams.departureDate}
-                                        onChange={handleSearchChange}
-                                    />
-                                </div>
-                                <div className="flex flex-col gap-1.5">
-                                    <label className="text-[10px] uppercase font-bold text-gray-400">Class</label>
-                                    <select
-                                        name="cabinClass"
-                                        value={searchParams.cabinClass}
-                                        onChange={handleSearchChange}
-                                        className="bg-[#f3f4f6] text-[12px] h-[52px] w-full border-none rounded-xl px-4 font-semibold text-gray-700 outline-none"
-                                    >
-                                        <option value="economy">Economy</option>
-                                        <option value="premium_economy">Premium Economy</option>
-                                        <option value="business">Business</option>
-                                        <option value="first">First Class</option>
-                                    </select>
-                                </div>
-                                <div className="flex flex-col gap-1.5">
-                                    <label className="text-[10px] uppercase font-bold text-gray-400">Passengers</label>
-                                    <select
-                                        name="passengersCount"
-                                        value={searchParams.passengersCount}
-                                        onChange={handleSearchChange}
-                                        className="bg-[#f3f4f6] text-[12px] h-[52px] w-full border-none rounded-xl px-4 font-semibold text-gray-700 outline-none"
-                                    >
-                                        <option value="1">1 Passenger</option>
-                                        <option value="2">2 Passengers</option>
-                                        <option value="3">3 Passengers</option>
-                                        <option value="4">4 Passengers</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <button
-                                type="submit"
-                                disabled={isSearching}
-                                className="w-full h-[52px] bg-primary text-white font-bold rounded-xl flex items-center justify-center gap-2 hover:bg-opacity-95 transition-all shadow-md active:scale-98"
-                            >
-                                <FaSearch />
-                                <span>{isSearching ? 'Searching Flights...' : 'Search Flights'}</span>
-                            </button>
-                        </form>
-                    )}
-
-                    {/* FLIGHT LISTINGS */}
-                    {!selectedOffer && flights.length > 0 && (
-                        <div className="space-y-4">
-                            <h3 className="text-sm font-bold text-gray-700 px-1">Available Offers</h3>
-                            {flights.map((flight) => (
-                                <motion.div
-                                    key={flight.offerId}
-                                    whileHover={{ scale: 1.01 }}
-                                    className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"
-                                >
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-10 h-10 bg-gray-50 rounded-xl flex items-center justify-center border border-gray-100 text-lg font-bold text-gray-700">
-                                            {flight.airline.substring(0,2).toUpperCase()}
+                    {activeTab === 'book' && (
+                        <>
+                            {/* SEARCH PANEL */}
+                            {!selectedOffer && (
+                                <form className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 flex flex-col gap-4" onSubmit={handleSearch}>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="flex flex-col gap-1.5">
+                                            <label className="text-[10px] uppercase font-bold text-gray-400">Origin Location</label>
+                                            <select
+                                                name="origin"
+                                                value={searchParams.origin}
+                                                onChange={handleSearchChange}
+                                                className="bg-[#f3f4f6] text-[12px] h-[52px] w-full border-none rounded-xl px-4 font-semibold text-gray-700 outline-none"
+                                            >
+                                                <option value="LOS">Lagos (LOS) - Murtala Muhammed</option>
+                                                <option value="ABV">Abuja (ABV) - Nnamdi Azikiwe</option>
+                                                <option value="PHC">Port Harcourt (PHC) - Omagwa</option>
+                                                <option value="KAN">Kano (KAN) - Mallam Aminu</option>
+                                                <option value="ENU">Enugu (ENU) - Akanu Ibiam</option>
+                                                <option value="QOW">Owerri (QOW) - Sam Mbakwe</option>
+                                                <option value="CBQ">Calabar (CBQ) - Margaret Ekpo</option>
+                                                <option value="LHR">London (LHR) - Heathrow</option>
+                                                <option value="JFK">New York (JFK) - John F. Kennedy</option>
+                                                <option value="DXB">Dubai (DXB) - International</option>
+                                                <option value="CDG">Paris (CDG) - Charles de Gaulle</option>
+                                                <option value="JNB">Johannesburg (JNB) - O.R. Tambo</option>
+                                                <option value="ACC">Accra (ACC) - Kotoka</option>
+                                                <option value="KGL">Kigali (KGL) - Intl</option>
+                                            </select>
                                         </div>
-                                        <div>
-                                            <h4 className="text-sm font-bold text-gray-800">{flight.airline}</h4>
-                                            <p className="text-[10px] text-gray-400 font-semibold">{flight.flightNumber} • {flight.cabinClass || "Economy"}</p>
+                                        <div className="flex flex-col gap-1.5">
+                                            <label className="text-[10px] uppercase font-bold text-gray-400">Destination Location</label>
+                                            <select
+                                                name="destination"
+                                                value={searchParams.destination}
+                                                onChange={handleSearchChange}
+                                                className="bg-[#f3f4f6] text-[12px] h-[52px] w-full border-none rounded-xl px-4 font-semibold text-gray-700 outline-none"
+                                            >
+                                                <option value="ABV">Abuja (ABV) - Nnamdi Azikiwe</option>
+                                                <option value="LOS">Lagos (LOS) - Murtala Muhammed</option>
+                                                <option value="PHC">Port Harcourt (PHC) - Omagwa</option>
+                                                <option value="KAN">Kano (KAN) - Mallam Aminu</option>
+                                                <option value="ENU">Enugu (ENU) - Akanu Ibiam</option>
+                                                <option value="QOW">Owerri (QOW) - Sam Mbakwe</option>
+                                                <option value="CBQ">Calabar (CBQ) - Margaret Ekpo</option>
+                                                <option value="LHR">London (LHR) - Heathrow</option>
+                                                <option value="JFK">New York (JFK) - John F. Kennedy</option>
+                                                <option value="DXB">Dubai (DXB) - International</option>
+                                                <option value="CDG">Paris (CDG) - Charles de Gaulle</option>
+                                                <option value="JNB">Johannesburg (JNB) - O.R. Tambo</option>
+                                                <option value="ACC">Accra (ACC) - Kotoka</option>
+                                                <option value="KGL">Kigali (KGL) - Intl</option>
+                                            </select>
                                         </div>
                                     </div>
 
-                                    <div className="flex items-center gap-6 w-full sm:w-auto justify-between sm:justify-end">
-                                        <div className="text-right">
-                                            <div className="text-[11px] font-bold text-gray-500 flex items-center gap-1">
-                                                <FaClock /> {new Date(flight.departureTime).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
-                                            </div>
-                                            <p className="text-[10px] text-gray-400 mt-0.5">{flight.origin} ➔ {flight.destination}</p>
+                                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                        <div className="flex flex-col gap-1.5">
+                                            <label className="text-[10px] uppercase font-bold text-gray-400">Departure Date</label>
+                                            <Input
+                                                type="date"
+                                                name="departureDate"
+                                                value={searchParams.departureDate}
+                                                onChange={handleSearchChange}
+                                            />
                                         </div>
-                                        
-                                        <div className="text-right">
-                                            <span className="block text-base font-black text-gray-900">
-                                                ₦{Number(flight.amount).toLocaleString()}
-                                            </span>
-                                            <button
-                                                onClick={() => {
-                                                    setSelectedOffer(flight);
-                                                    // Ensure passengers array length matches passengersCount
-                                                    const len = Number(searchParams.passengersCount);
-                                                    setPassengers(Array.from({ length: len }, (_, i) => passengers[i] || { firstName: '', lastName: '', email: '', phone: '', gender: 'm', title: 'mr' }));
-                                                }}
-                                                className="mt-1 bg-orange-100 text-orange-600 px-3 py-1.5 rounded-lg text-xs font-bold transition-all hover:bg-orange-200"
+                                        <div className="flex flex-col gap-1.5">
+                                            <label className="text-[10px] uppercase font-bold text-gray-400">Class</label>
+                                            <select
+                                                name="cabinClass"
+                                                value={searchParams.cabinClass}
+                                                onChange={handleSearchChange}
+                                                className="bg-[#f3f4f6] text-[12px] h-[52px] w-full border-none rounded-xl px-4 font-semibold text-gray-700 outline-none"
                                             >
-                                                Book
+                                                <option value="economy">Economy</option>
+                                                <option value="premium_economy">Premium Economy</option>
+                                                <option value="business">Business</option>
+                                                <option value="first">First Class</option>
+                                            </select>
+                                        </div>
+                                        <div className="flex flex-col gap-1.5">
+                                            <label className="text-[10px] uppercase font-bold text-gray-400">Passengers</label>
+                                            <select
+                                                name="passengersCount"
+                                                value={searchParams.passengersCount}
+                                                onChange={handleSearchChange}
+                                                className="bg-[#f3f4f6] text-[12px] h-[52px] w-full border-none rounded-xl px-4 font-semibold text-gray-700 outline-none"
+                                            >
+                                                <option value="1">1 Passenger</option>
+                                                <option value="2">2 Passengers</option>
+                                                <option value="3">3 Passengers</option>
+                                                <option value="4">4 Passengers</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <button
+                                        type="submit"
+                                        disabled={isSearching}
+                                        className="w-full h-[52px] bg-primary text-white font-bold rounded-xl flex items-center justify-center gap-2 hover:bg-opacity-95 transition-all shadow-md active:scale-98"
+                                    >
+                                        <FaSearch />
+                                        <span>{isSearching ? 'Searching Flights...' : 'Search Flights'}</span>
+                                    </button>
+                                </form>
+                            )}
+
+                            {/* FLIGHT LISTINGS */}
+                            {!selectedOffer && flights.length > 0 && (
+                                <div className="space-y-4">
+                                    <h3 className="text-sm font-bold text-gray-700 px-1">Available Offers</h3>
+                                    {flights.map((flight) => (
+                                        <motion.div
+                                            key={flight.offerId}
+                                            whileHover={{ scale: 1.01 }}
+                                            className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"
+                                        >
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-10 h-10 bg-gray-50 rounded-xl flex items-center justify-center border border-gray-100 text-lg font-bold text-gray-700">
+                                                    {flight.airline.substring(0,2).toUpperCase()}
+                                                </div>
+                                                <div>
+                                                    <h4 className="text-sm font-bold text-gray-800">{flight.airline}</h4>
+                                                    <p className="text-[10px] text-gray-400 font-semibold">{flight.flightNumber} • {flight.cabinClass || "Economy"}</p>
+                                                </div>
+                                            </div>
+
+                                            <div className="flex items-center gap-6 w-full sm:w-auto justify-between sm:justify-end">
+                                                <div className="text-right">
+                                                    <div className="text-[11px] font-bold text-gray-500 flex items-center gap-1">
+                                                        <FaClock /> {new Date(flight.departureTime).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                                                    </div>
+                                                    <p className="text-[10px] text-gray-400 mt-0.5">{flight.origin} ➔ {flight.destination}</p>
+                                                </div>
+                                                
+                                                <div className="text-right">
+                                                    <span className="block text-base font-black text-gray-900">
+                                                        ₦{Number(flight.amount).toLocaleString()}
+                                                    </span>
+                                                    <button
+                                                        onClick={() => {
+                                                            setSelectedOffer(flight);
+                                                            const len = Number(searchParams.passengersCount);
+                                                            setPassengers(Array.from({ length: len }, (_, i) => passengers[i] || { firstName: '', lastName: '', email: '', phone: '', gender: 'm', title: 'mr' }));
+                                                        }}
+                                                        className="mt-1 bg-orange-100 text-orange-600 px-3 py-1.5 rounded-lg text-xs font-bold transition-all hover:bg-orange-200"
+                                                    >
+                                                        Book
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </motion.div>
+                                    ))}
+                                </div>
+                            )}
+
+                            {/* PASSENGER & CHECKOUT DETAILS */}
+                            {selectedOffer && (
+                                <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
+                                    <div className="bg-orange-50/50 border border-orange-200 rounded-2xl p-4 flex justify-between items-center">
+                                        <div>
+                                            <span className="text-[10px] font-bold uppercase text-orange-600">Selected Flight</span>
+                                            <h4 className="text-sm font-black text-orange-950 mt-0.5">{selectedOffer.airline} • {selectedOffer.flightNumber}</h4>
+                                            <p className="text-xs text-orange-900/80 font-medium mt-0.5">{selectedOffer.origin} ➔ {selectedOffer.destination} • {new Date(selectedOffer.departureTime).toLocaleDateString()}</p>
+                                        </div>
+                                        <div className="text-right">
+                                            <span className="block text-lg font-black text-orange-950">₦{Number(selectedOffer.amount).toLocaleString()}</span>
+                                            <button onClick={() => setSelectedOffer(null)} className="text-[10px] font-bold text-gray-500 hover:text-gray-700 underline mt-1">Change</button>
+                                        </div>
+                                    </div>
+
+                                    <form className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 space-y-6" onSubmit={handleBookAndPay}>
+                                        <h3 className="text-sm font-bold text-gray-800 border-b pb-2">Passenger Information</h3>
+                                        
+                                        {passengers.map((passenger, index) => (
+                                            <div key={index} className="space-y-3 pt-2">
+                                                <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider">Passenger {index + 1}</h4>
+                                                <div className="grid grid-cols-3 gap-2">
+                                                    <div className="col-span-1">
+                                                        <select
+                                                            name="title"
+                                                            value={passenger.title}
+                                                            onChange={(e) => handlePassengerChange(index, e)}
+                                                            className="bg-[#f3f4f6] text-[12px] h-[52px] w-full border-none rounded-xl px-2 font-semibold text-gray-700 outline-none"
+                                                        >
+                                                            <option value="mr">Mr.</option>
+                                                            <option value="ms">Ms.</option>
+                                                            <option value="mrs">Mrs.</option>
+                                                            <option value="miss">Miss</option>
+                                                        </select>
+                                                    </div>
+                                                    <div className="col-span-1">
+                                                        <Input
+                                                            type="text"
+                                                            name="firstName"
+                                                            placeholder="First Name"
+                                                            value={passenger.firstName}
+                                                            onChange={(e) => handlePassengerChange(index, e)}
+                                                        />
+                                                    </div>
+                                                    <div className="col-span-1">
+                                                        <Input
+                                                            type="text"
+                                                            name="lastName"
+                                                            placeholder="Last Name"
+                                                            value={passenger.lastName}
+                                                            onChange={(e) => handlePassengerChange(index, e)}
+                                                        />
+                                                    </div>
+                                                </div>
+
+                                                <div className="grid grid-cols-2 gap-2">
+                                                    <Input
+                                                        type="email"
+                                                        name="email"
+                                                        placeholder="Email Address"
+                                                        value={passenger.email}
+                                                        onChange={(e) => handlePassengerChange(index, e)}
+                                                    />
+                                                    <Input
+                                                        type="tel"
+                                                        name="phone"
+                                                        placeholder="Phone Number"
+                                                        value={passenger.phone}
+                                                        onChange={(e) => handlePassengerChange(index, e)}
+                                                    />
+                                                </div>
+
+                                                <div className="flex items-center gap-4 pl-1">
+                                                    <span className="text-xs font-bold text-gray-400">Gender:</span>
+                                                    <label className="flex items-center gap-1.5 text-xs font-semibold text-gray-600 cursor-pointer">
+                                                        <input
+                                                            type="radio"
+                                                            name={`gender-${index}`}
+                                                            checked={passenger.gender === 'm'}
+                                                            onChange={() => {
+                                                                const updated = [...passengers];
+                                                                updated[index].gender = 'm';
+                                                                setPassengers(updated);
+                                                            }}
+                                                            className="accent-primary"
+                                                        />
+                                                        Male
+                                                    </label>
+                                                    <label className="flex items-center gap-1.5 text-xs font-semibold text-gray-600 cursor-pointer">
+                                                        <input
+                                                            type="radio"
+                                                            name={`gender-${index}`}
+                                                            checked={passenger.gender === 'f'}
+                                                            onChange={() => {
+                                                                const updated = [...passengers];
+                                                                updated[index].gender = 'f';
+                                                                setPassengers(updated);
+                                                            }}
+                                                            className="accent-primary"
+                                                        />
+                                                        Female
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        ))}
+
+                                        <div className="pt-4 border-t">
+                                            <button
+                                                type="submit"
+                                                disabled={isBooking}
+                                                className="w-full h-[52px] bg-primary text-white font-bold rounded-xl flex items-center justify-center gap-2 hover:bg-opacity-95 transition-all shadow-md active:scale-98"
+                                            >
+                                                <span>{isBooking ? 'Processing Payment...' : 'Proceed to Checkout & Pay'}</span>
+                                            </button>
+                                        </div>
+                                    </form>
+                                </motion.div>
+                            )}
+                        </>
+                    )}
+
+                    {/* VAULT/HISTORY TAB */}
+                    {activeTab === 'history' && (
+                        <div className="space-y-3">
+                            <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider pl-1">Delivered E-Tickets</h3>
+                            {loadingHistory ? (
+                                <div className="text-center py-10 font-bold text-gray-400">Loading Bookings Vault...</div>
+                            ) : myBookings.length === 0 ? (
+                                <div className="bg-white rounded-2xl p-8 border border-gray-100 text-center text-xs text-gray-400 font-bold">
+                                    No flight bookings in your vault yet.
+                                </div>
+                            ) : (
+                                myBookings.map((booking: any) => (
+                                    <div key={booking._id} className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col gap-3">
+                                        <div className="flex justify-between items-start">
+                                            <div>
+                                                <h4 className="text-xs font-black text-gray-800 uppercase flex items-center gap-1.5">
+                                                    <FaPlane className="text-primary" />
+                                                    <span>{booking.airline} • {booking.flightNumber}</span>
+                                                </h4>
+                                                <p className="text-[9px] text-gray-400 font-semibold mt-0.5">{booking.origin} ➔ {booking.destination} • {new Date(booking.departureDate).toLocaleDateString()}</p>
+                                            </div>
+                                            <span className={`text-[9px] font-bold px-2 py-0.5 rounded-md uppercase tracking-wider ${
+                                                booking.status === 'CONFIRMED' ? 'bg-green-50 text-green-600 border border-green-200' : 'bg-yellow-50 text-yellow-600 border border-yellow-200'
+                                            }`}>
+                                                {booking.status}
+                                            </span>
+                                        </div>
+
+                                        <div className="border-t border-dashed border-gray-100 pt-2 flex justify-between items-center text-xs">
+                                            <div className="text-left font-medium text-gray-600">
+                                                <span className="block text-[8px] uppercase font-bold text-gray-400">PNR Reference</span>
+                                                <code className="text-sm font-black font-mono text-gray-800 select-all">{booking.pnr || "CONFIRMED"}</code>
+                                            </div>
+                                            <button
+                                                onClick={() => router.push(`/service/flights/receipt/${booking._id}`)}
+                                                className="bg-orange-100 text-orange-600 px-3 py-1.5 rounded-lg text-xs font-bold transition-all hover:bg-orange-200 flex items-center gap-1.5"
+                                            >
+                                                <span>View Ticket</span>
                                             </button>
                                         </div>
                                     </div>
-                                </motion.div>
-                            ))}
+                                ))
+                            )}
                         </div>
-                    )}
-
-                    {/* PASSENGER & CHECKOUT DETAILS */}
-                    {selectedOffer && (
-                        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
-                            {/* Selected Flight Summary */}
-                            <div className="bg-orange-50/50 border border-orange-200 rounded-2xl p-4 flex justify-between items-center">
-                                <div>
-                                    <span className="text-[10px] font-bold uppercase text-orange-600">Selected Flight</span>
-                                    <h4 className="text-sm font-black text-orange-950 mt-0.5">{selectedOffer.airline} • {selectedOffer.flightNumber}</h4>
-                                    <p className="text-xs text-orange-900/80 font-medium mt-0.5">{selectedOffer.origin} ➔ {selectedOffer.destination} • {new Date(selectedOffer.departureTime).toLocaleDateString()}</p>
-                                </div>
-                                <div className="text-right">
-                                    <span className="block text-lg font-black text-orange-950">₦{Number(selectedOffer.amount).toLocaleString()}</span>
-                                    <button onClick={() => setSelectedOffer(null)} className="text-[10px] font-bold text-gray-500 hover:text-gray-700 underline mt-1">Change</button>
-                                </div>
-                            </div>
-
-                            {/* Passenger Details Form */}
-                            <form className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 space-y-6" onSubmit={handleBookAndPay}>
-                                <h3 className="text-sm font-bold text-gray-800 border-b pb-2">Passenger Information</h3>
-                                
-                                {passengers.map((passenger, index) => (
-                                    <div key={index} className="space-y-3 pt-2">
-                                        <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider">Passenger {index + 1}</h4>
-                                        <div className="grid grid-cols-3 gap-2">
-                                            <div className="col-span-1">
-                                                <select
-                                                    name="title"
-                                                    value={passenger.title}
-                                                    onChange={(e) => handlePassengerChange(index, e)}
-                                                    className="bg-[#f3f4f6] text-[12px] h-[52px] w-full border-none rounded-xl px-2 font-semibold text-gray-700 outline-none"
-                                                >
-                                                    <option value="mr">Mr.</option>
-                                                    <option value="ms">Ms.</option>
-                                                    <option value="mrs">Mrs.</option>
-                                                    <option value="miss">Miss</option>
-                                                </select>
-                                            </div>
-                                            <div className="col-span-1">
-                                                <Input
-                                                    type="text"
-                                                    name="firstName"
-                                                    placeholder="First Name"
-                                                    value={passenger.firstName}
-                                                    onChange={(e) => handlePassengerChange(index, e)}
-                                                />
-                                            </div>
-                                            <div className="col-span-1">
-                                                <Input
-                                                    type="text"
-                                                    name="lastName"
-                                                    placeholder="Last Name"
-                                                    value={passenger.lastName}
-                                                    onChange={(e) => handlePassengerChange(index, e)}
-                                                />
-                                            </div>
-                                        </div>
-
-                                        <div className="grid grid-cols-2 gap-2">
-                                            <Input
-                                                type="email"
-                                                name="email"
-                                                placeholder="Email Address"
-                                                value={passenger.email}
-                                                onChange={(e) => handlePassengerChange(index, e)}
-                                            />
-                                            <Input
-                                                type="tel"
-                                                name="phone"
-                                                placeholder="Phone Number"
-                                                value={passenger.phone}
-                                                onChange={(e) => handlePassengerChange(index, e)}
-                                            />
-                                        </div>
-
-                                        <div className="flex items-center gap-4 pl-1">
-                                            <span className="text-xs font-bold text-gray-400">Gender:</span>
-                                            <label className="flex items-center gap-1.5 text-xs font-semibold text-gray-600 cursor-pointer">
-                                                <input
-                                                    type="radio"
-                                                    name={`gender-${index}`}
-                                                    checked={passenger.gender === 'm'}
-                                                    onChange={() => {
-                                                        const updated = [...passengers];
-                                                        updated[index].gender = 'm';
-                                                        setPassengers(updated);
-                                                    }}
-                                                    className="accent-primary"
-                                                />
-                                                Male
-                                            </label>
-                                            <label className="flex items-center gap-1.5 text-xs font-semibold text-gray-600 cursor-pointer">
-                                                <input
-                                                    type="radio"
-                                                    name={`gender-${index}`}
-                                                    checked={passenger.gender === 'f'}
-                                                    onChange={() => {
-                                                        const updated = [...passengers];
-                                                        updated[index].gender = 'f';
-                                                        setPassengers(updated);
-                                                    }}
-                                                    className="accent-primary"
-                                                />
-                                                Female
-                                            </label>
-                                        </div>
-                                    </div>
-                                ))}
-
-                                <div className="pt-4 border-t">
-                                    <button
-                                        type="submit"
-                                        disabled={isBooking}
-                                        className="w-full h-[52px] bg-primary text-white font-bold rounded-xl flex items-center justify-center gap-2 hover:bg-opacity-95 transition-all shadow-md active:scale-98"
-                                    >
-                                        <span>{isBooking ? 'Processing Payment...' : 'Proceed to Checkout & Pay'}</span>
-                                    </button>
-                                </div>
-                            </form>
-                        </motion.div>
                     )}
                 </div>
             </motion.div>

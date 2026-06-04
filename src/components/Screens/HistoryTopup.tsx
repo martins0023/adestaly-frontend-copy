@@ -15,6 +15,10 @@ import {
   FaCalendarAlt,
   FaSpinner,
   FaExclamationCircle,
+  FaPlane,
+  FaTruck,
+  FaGraduationCap,
+  FaGift,
 } from 'react-icons/fa';
 
 import { UseGetApi } from '@/src/config/Action';
@@ -215,7 +219,7 @@ export default function HistoryTopup() {
     return groups;
   }, [filteredTransactions]);
 
-  const filterOptions = ['All', 'Airtime', 'Data', 'Tv', 'Electricity'];
+  const filterOptions = ['All', 'Airtime', 'Data', 'Tv', 'Electricity', 'Flight', 'Delivery', 'School-fees', 'Giftcard'];
 
   // Animations
   const containerVariants = {
@@ -311,13 +315,31 @@ export default function HistoryTopup() {
                             {/* Left: Icon & Info */}
                             <div className="flex items-center gap-3.5">
                               <div className="relative">
-                                <Image
-                                  src={providerIcons[t.provider] || '/images/mtn.png'}
-                                  alt={t.provider}
-                                  width={40}
-                                  height={40}
-                                  className="w-10 h-10 rounded-full object-cover border border-gray-100"
-                                />
+                                {t.type.toLowerCase() === 'flight' ? (
+                                  <div className="w-10 h-10 rounded-full bg-orange-50 border border-orange-100 flex items-center justify-center text-primary text-sm font-black shadow-sm">
+                                    <FaPlane />
+                                  </div>
+                                ) : t.type.toLowerCase() === 'delivery' ? (
+                                  <div className="w-10 h-10 rounded-full bg-rose-50 border border-rose-100 flex items-center justify-center text-rose-600 text-sm font-black shadow-sm">
+                                    <FaTruck />
+                                  </div>
+                                ) : t.type.toLowerCase() === 'school-fees' ? (
+                                  <div className="w-10 h-10 rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 text-sm font-black shadow-sm">
+                                    <FaGraduationCap />
+                                  </div>
+                                ) : t.type.toLowerCase() === 'giftcard' ? (
+                                  <div className="w-10 h-10 rounded-full bg-purple-50 border border-purple-100 flex items-center justify-center text-purple-600 text-sm font-black shadow-sm">
+                                    <FaGift />
+                                  </div>
+                                ) : (
+                                  <Image
+                                    src={providerIcons[t.provider] || '/images/mtn.png'}
+                                    alt={t.provider}
+                                    width={40}
+                                    height={40}
+                                    className="w-10 h-10 rounded-full object-cover border border-gray-100"
+                                  />
+                                )}
                                 <div
                                   className={`absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full border-2 border-white flex items-center justify-center ${
                                     t.status.toLowerCase() === 'success' ||
